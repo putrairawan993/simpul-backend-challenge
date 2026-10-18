@@ -1,0 +1,7 @@
+node_modules
+var
+test
+.git
+.gitignore
+README.md
+*.log

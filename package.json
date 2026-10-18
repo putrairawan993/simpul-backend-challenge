@@ -1,0 +1,20 @@
+{
+  "name": "simpul-warehouse-allocator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Warehouse allocation API for a medical and pharmaceutical distribution platform",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test",
+    "analyze": "node scripts/analyze.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

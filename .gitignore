@@ -1,0 +1,11 @@
+node_modules/
+var/
+*.log
+.env
+.DS_Store
+Thumbs.db
+
+# The submission README is delivered separately and must stay out of the repo.
+README.md
+README.pdf
+README.txt

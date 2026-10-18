@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Warehouse allocation for a medical and pharmaceutical distribution platform."
+    />
+    <title>Simpul Warehouse Allocator</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" role="img">
+            <rect x="4" y="4" width="32" height="32" rx="9" fill="currentColor" opacity="0.14" />
+            <path d="M20 11v18M11 20h18" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div>
+          <p class="eyebrow">Simpul Technologies · Backend challenge</p>
+          <h1>Warehouse allocator</h1>
+          <p class="tagline">
+            Pick the lowest-cost warehouse plan for a medical supply order, with stock and
+            cold-chain rules applied.
+          </p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="status-chip" id="api-status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="api-status-text">Checking API</span>
+        </span>
+        <span class="customer-chip">Customer 1 · Surabaya</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="workspace">
+        <form id="order-form" class="panel order-panel" novalidate>
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">New order</p>
+              <h2>Build an order</h2>
+            </div>
+            <button type="button" class="ghost" id="sample-order">Load sample</button>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Customer location</span>
+            <div class="readonly-field">
+              <span>Customer 1 · Surabaya</span>
+              <span class="readonly-note">single customer location</span>
+            </div>
+          </div>
+
+          <fieldset class="field">
+            <legend>Delivery time (WIB)</legend>
+            <div class="segmented">
+              <label class="segment">
+                <input type="radio" name="time-mode" value="now" checked />
+                <span>Now</span>
+              </label>
+              <label class="segment">
+                <input type="radio" name="time-mode" value="custom" />
+                <span>Choose a time</span>
+              </label>
+            </div>
+            <input type="datetime-local" id="requested-at" disabled />
+            <p class="hint" id="time-hint">
+              The current Jakarta time is used for the ETA bucket.
+            </p>
+          </fieldset>
+
+          <div class="field">
+            <div class="items-heading">
+              <span class="field-label">Items</span>
+              <button type="button" class="ghost small" id="add-item">+ Add item</button>
+            </div>
+            <div id="item-rows" class="item-rows"></div>
+          </div>
+
+          <button type="submit" class="primary" id="submit-order">
+            <span class="button-label">Find best warehouses</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+          <p class="fine-print">
+            Stock is a read-only snapshot. This tool decides allocation; it does not reserve
+            inventory.
+          </p>
+          <div id="form-error" class="form-error" role="alert" hidden></div>
+        </form>
+
+        <section class="panel result-panel" aria-live="polite">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Decision</p>
+              <h2>Allocation result</h2>
+            </div>
+            <span id="result-order-id" class="order-id"></span>
+          </div>
+
+          <div id="result-empty" class="empty-state">
+            <div class="empty-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64">
+                <path
+                  d="M8 26 32 12l24 14v24a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V26Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M8 26h48M22 26v28M42 26v28M32 12v14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <h3>No order yet</h3>
+            <p>
+              Submit an order to see which warehouse or warehouses should fulfil it, why they
+              were picked, and what the delivery estimate looks like.
+            </p>
+          </div>
+
+          <div id="result-content" hidden></div>
+        </section>
+      </section>
+
+      <section class="secondary-grid">
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Reference</p>
+              <h2>Products</h2>
+            </div>
+            <span class="panel-count" id="product-count"></span>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="products-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Handling</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Reference</p>
+              <h2>Warehouses</h2>
+            </div>
+            <span class="panel-count" id="warehouse-count"></span>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="warehouses-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Location</th>
+                  <th>Distance</th>
+                  <th>Capabilities</th>
+                  <th>Stock</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="panel insights-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Bonus · historical data</p>
+            <h2>Delivery pattern insights</h2>
+          </div>
+          <span class="caveat" id="eta-caveat"></span>
+        </div>
+        <div id="insights-list" class="insights-list"></div>
+        <div class="table-scroll">
+          <table class="data-table compact" id="patterns-table">
+            <thead>
+              <tr>
+                <th>Warehouse</th>
+                <th>Day type</th>
+                <th>Time bucket</th>
+                <th>Samples</th>
+                <th>Median</th>
+                <th>Range</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Simpul Warehouse Allocator · core decision engine</span>
+      <span>Distances are measured from the single customer location.</span>
+    </footer>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

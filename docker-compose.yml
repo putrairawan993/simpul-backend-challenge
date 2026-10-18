@@ -1,0 +1,33 @@
+services:
+  simpul-api:
+    build: .
+    container_name: simpul-api
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      DATA_DIR: /app/var
+      TZ: Asia/Jakarta
+    volumes:
+      - simpul-orders:/app/var
+    networks:
+      - istudentplus
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  istudentplus:
+    external: true
+    name: istudentplus-api_default
+
+volumes:
+  simpul-orders:
