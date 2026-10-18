@@ -1,5 +1,7 @@
 node_modules/
 var/
+dist/
+.vercel/
 *.log
 .env
 .DS_Store

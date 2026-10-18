@@ -9,7 +9,8 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "test": "node --test",
-    "analyze": "node scripts/analyze.js"
+    "analyze": "node scripts/analyze.js",
+    "build:static": "node scripts/build-static.mjs"
   },
   "engines": {
     "node": ">=22"
