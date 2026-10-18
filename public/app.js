@@ -447,12 +447,14 @@ function renderWarehouses(warehouses) {
           )}</span></td>
           <td>${warehouse.distance_km} km</td>
           <td>
-            <span class="tag ${warehouse.refrigerated_storage ? 'yes' : 'no'}">Storage ${
-              warehouse.refrigerated_storage ? 'cold' : 'ambient'
-            }</span>
-            <span class="tag ${warehouse.refrigerated_fleet ? 'yes' : 'no'}">Fleet ${
-              warehouse.refrigerated_fleet ? 'refrigerated' : 'standard'
-            }</span>
+            <div class="tag-list">
+              <span class="tag ${warehouse.refrigerated_storage ? 'yes' : 'no'}">Storage ${
+                warehouse.refrigerated_storage ? 'cold' : 'ambient'
+              }</span>
+              <span class="tag ${warehouse.refrigerated_fleet ? 'yes' : 'no'}">Fleet ${
+                warehouse.refrigerated_fleet ? 'refrigerated' : 'standard'
+              }</span>
+            </div>
           </td>
           <td>${escapeHtml(stock)}</td>
         </tr>
